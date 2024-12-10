@@ -6,95 +6,96 @@
 /*   By: dshvydka <dshvydka@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/17 14:14:08 by dshvydka          #+#    #+#             */
-/*   Updated: 2024/11/26 15:32:16 by dshvydka         ###   ########.fr       */
+/*   Updated: 2024/12/10 15:27:08 by dshvydka         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-// allocates and returns a substring from s,
-// that begins at index start and of maximum size len
-char	*ft_substr(char *s, unsigned int start, size_t len)
+// finds 1st occurrence of the character c in the string s
+char	*ft_strchr(const char *str, int chr)
 {
-	size_t	i;
-	char	*str;
+	char	ch;
 
-	if (!s)
-		return (NULL);
-	if (start > ft_strlen(s))
-		return (malloc(1));
-	if (len > ft_strlen(s + start))
-		len = ft_strlen(s + start);
-	str = malloc((len + 1) * sizeof(char));
-	if (!str)
-		return (NULL);
-	i = 0;
-	while (i < len)
+	ch = (char)chr;
+	while (*str)
 	{
-		str[i] = s[start + i];
-		i++;
+		if (*str == ch)
+		{
+			return ((char *)str);
+		}
+		str++;
 	}
-	str[i] = 0;
-	return (str);
-}
-
-// not dumb, but dup -> duplicates the string, allocates mem for new str
-char	*ft_strdup(char *s1)
-{
-	char			*dest;
-	unsigned int	i;
-
-	dest = (char *)malloc(ft_strlen(s1) + 1);
-	if (!dest)
-		return (NULL);
-	i = 0;
-	while (s1[i])
+	if (*str == ch)
 	{
-		dest[i] = s1[i];
-		i++;
+		return ((char *)str);
 	}
-	dest[i] = 0;
-	return (dest);
+	return (NULL);
 }
 
 // returns length of string
 size_t	ft_strlen(const char *str)
 {
-	int	length;
-
-	length = 0;
-	while (*str != '\0')
-	{
-		length++;
-		str++;
-	}
-	return (length);
-}
-
-// filling the string
-void	fill_str(char *res, char *s1, char *s2)
-{
-	unsigned int	i;
-	unsigned int	j;
+	int	i;
 
 	i = 0;
-	j = 0;
-	while (s1[j])
-		res[i++] = s1[j++];
-	j = 0;
-	while (s2[j])
-		res[i++] = s2[j++];
-	res[i] = '\0';
+	while (str[i])
+		i++;
+	return (i);
 }
 
 // allocates and returns a concat of s1&s2 as a new string
 char	*ft_strjoin(char *s1, char *s2)
 {
-	char	*res;
+	char			*res;
+	size_t			total_size;
+	unsigned int	i;
+	unsigned int	j;
 
-	res = (char *)malloc((ft_strlen(s1) + ft_strlen(s2) + 1) * sizeof(char));
-	if (!res)
+	i = 0;
+	total_size = ft_strlen(s1) + ft_strlen(s2);
+	res = malloc(sizeof(char) * (total_size + 1));
+	if (!res || !s1 || !s2)
 		return (NULL);
-	fill_str(res, s1, s2);
+	while (s1[i] != 0)
+	{
+		res[i] = s1[i];
+		i++;
+	}
+	j = 0;
+	while (s2[j] != 0)
+	{
+		res[i] = s2[j];
+		i++;
+		j++;
+	}
+	res[total_size] = 0;
 	return (res);
+}
+
+// allocates memory for an array of num elements of size bytes each.
+// the memory is set to zero.
+void	*ft_calloc(size_t num, size_t size)
+{
+	char	*ptr;
+
+	ptr = malloc(size * num);
+	if (!ptr)
+		return (NULL);
+	ft_bzero(ptr, size * num);
+	return (ptr);
+}
+
+void	ft_bzero(void *s, size_t n)
+{
+	char	*p;
+	size_t	i;
+
+	p = (char *)s;
+	i = 0;
+	while (i < n)
+	{
+		p[i] = '\0';
+		i++;
+	}
 }
