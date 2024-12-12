@@ -52,10 +52,12 @@ char	*ft_strjoin(char *s1, char *s2)
 	unsigned int	i;
 	unsigned int	j;
 
+	if (!s1 || !s2)
+		return (NULL);
 	i = 0;
 	total_size = ft_strlen(s1) + ft_strlen(s2);
 	res = malloc(sizeof(char) * (total_size + 1));
-	if (!res || !s1 || !s2)
+	if (!res)
 		return (NULL);
 	while (s1[i] != 0)
 	{

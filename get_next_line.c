@@ -13,12 +13,13 @@
 #include "get_next_line.h"
 #include <stdio.h>
 
-char	*append_buffer(char *basin_buffer, char *read_buffer)
+char	*append_buffer(char *buffer, char *small_buffer)
 {
 	char	*temp;
 
-	temp = ft_strjoin(basin_buffer, read_buffer);
-	free(basin_buffer);
+	temp = ft_strjoin(buffer, small_buffer);
+	free(buffer);
+	buffer = NULL;
 	return (temp);
 }
 
@@ -27,11 +28,13 @@ char	*read_from_file(char *buffer, int fd)
 	int		bytes_read;
 	char	*small_buffer;
 
-	if (!buffer)
-		buffer = ft_calloc(1, sizeof(char));
 	small_buffer = ft_calloc((BUFFER_SIZE + 1), sizeof(char));
 	if (small_buffer == NULL)
 		return (NULL);
+	if (!buffer)
+		buffer = ft_calloc(1, sizeof(char));
+	if (buffer == NULL)
+		return (free(small_buffer), NULL);
 	bytes_read = 1;
 	while (bytes_read > 0)
 	{
@@ -40,6 +43,8 @@ char	*read_from_file(char *buffer, int fd)
 			return (free(small_buffer), NULL);
 		small_buffer[bytes_read] = '\0';
 		buffer = append_buffer(buffer, small_buffer);
+		if (buffer == NULL)
+			return (NULL);
 		if (ft_strchr(buffer, '\n'))
 			break ;
 	}
@@ -81,6 +86,7 @@ char	*update_buff(char *buffer)
 	if (!buffer[i])
 	{
 		free(buffer);
+		buffer = NULL;
 		return (NULL);
 	}
 	line = ft_calloc((ft_strlen(buffer) - i + 1), sizeof(char));
@@ -89,11 +95,12 @@ char	*update_buff(char *buffer)
 	while (buffer[i])
 		line[j++] = buffer[i++];
 	free(buffer);
+	buffer = NULL;
 	return (line);
 }
 
 //! main function responsible for reading data from the fd that fills
-// the basin_buffer to with the scooped content until atleast one ‘\n’
+// the buffer to with the scooped content until atleast one ‘\n’
 // new line character is found.
 char	*get_next_line(int fd)
 {
@@ -101,23 +108,28 @@ char	*get_next_line(int fd)
 	char		*line;
 
 	if (fd < 0 || read(fd, NULL, 0) < 0 || BUFFER_SIZE <= 0)
+	{
+		free(buffer);
+		buffer = NULL;
 		return (NULL);
+	}
 	buffer = read_from_file(buffer, fd);
-	if (!buffer)
-		return (free(buffer), NULL);
+	if (!buffer) {
+		return (NULL);
+	}
 	line = extract_line(buffer);
 	buffer = update_buff(buffer);
 	return (line);
 }
 
-// int	main(void)
+// int	mymain(void)
 // {
 // 	int fd;
 // 	char *line;
 // 	int count;
 
 // 	count = 0;
-// 	fd = open("txt.txt", O_RDONLY);
+// 	fd = open("read_error.txt", O_RDONLY);
 // 	if (fd == -1)
 // 	{
 // 		printf("Error opening file");
@@ -135,4 +147,9 @@ char	*get_next_line(int fd)
 // 	}
 // 	close(fd);
 // 	return (0);
+// }
+
+// int	main(void){
+//  mymain();
+//  mymain();
 // }
